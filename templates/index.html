@@ -1,34 +1,115 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Management System</title>
+    <title>StudentHub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial;
-            max-width: 900px;
-            margin: 40px auto;
-            background: #f4f6f8;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 22px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 35px auto;
+            padding: 0 20px;
         }
 
         h1 {
-            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat {
+            flex: 1;
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            box-shadow: 0 5px 18px rgba(0,0,0,.06);
+        }
+
+        .number {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .label {
+            color: #6b7280;
+            margin-top: 5px;
         }
 
         .card {
             background: white;
             padding: 25px;
+            border-radius: 15px;
             margin-bottom: 25px;
-            border-radius: 10px;
+            box-shadow: 0 5px 18px rgba(0,0,0,.06);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+        .form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 10px;
         }
 
         input {
-            padding: 10px;
-            margin: 5px;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font-size: 15px;
         }
 
         button {
-            padding: 10px 20px;
+            border: 0;
+            border-radius: 9px;
+            padding: 13px 20px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .search {
+            width: 100%;
+            margin-bottom: 18px;
         }
 
         table {
@@ -36,58 +117,157 @@
             border-collapse: collapse;
         }
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
+        th {
             text-align: left;
+            padding: 14px;
+            background: #f9fafb;
+            color: #6b7280;
         }
 
-        a {
-            color: red;
+        td {
+            padding: 15px 14px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .delete {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .delete:hover {
+            text-decoration: underline;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 800px) {
+            .stats,
+            .form {
+                display: block;
+            }
+
+            .stat,
+            input,
+            button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
+    <header>
+        <div class="logo">🎓 StudentHub</div>
+        <div>Student Management System</div>
+    </header>
 
-<h1>Student Management System</h1>
+    <main class="container">
 
-<div class="card">
-    <h2>Add Student</h2>
+        <h1>Welcome back 👋</h1>
+        <p class="subtitle">Manage your students from one simple dashboard.</p>
 
-    <form method="POST" action="/add">
-        <input name="name" placeholder="Student Name" required>
-        <input name="email" type="email" placeholder="Email" required>
-        <input name="course" placeholder="Course" required>
-        <button type="submit">Add Student</button>
-    </form>
-</div>
+        <section class="stats">
+            <div class="stat">
+                <div class="number">{{ students|length }}</div>
+                <div class="label">Total Students</div>
+            </div>
 
-<div class="card">
-    <h2>Students</h2>
+            <div class="stat">
+                <div class="number">
+                    {{ students|map(attribute=3)|unique|list|length }}
+                </div>
+                <div class="label">Courses</div>
+            </div>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Course</th>
-            <th>Action</th>
-        </tr>
+            <div class="stat">
+                <div class="number">✓</div>
+                <div class="label">System Online</div>
+            </div>
+        </section>
 
-        {% for student in students %}
-        <tr>
-            <td>{{ student[0] }}</td>
-            <td>{{ student[1] }}</td>
-            <td>{{ student[2] }}</td>
-            <td>{{ student[3] }}</td>
-            <td>
-                <a href="/delete/{{ student[0] }}">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
+        <section class="card">
+            <h2>➕ Add New Student</h2>
+
+            <form action="/add" method="POST" class="form">
+                <input type="text" name="name" placeholder="Student Name" required>
+                <input type="email" name="email" placeholder="Email Address" required>
+                <input type="text" name="course" placeholder="Course" required>
+                <button type="submit">Add Student</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>👨‍🎓 Students</h2>
+
+            <input
+                class="search"
+                id="searchBox"
+                type="text"
+                placeholder="🔍 Search students..."
+                onkeyup="searchStudents()"
+            >
+
+            {% if students %}
+            <table id="studentTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student[0] }}</td>
+                        <td><strong>{{ student[1] }}</strong></td>
+                        <td>{{ student[2] }}</td>
+                        <td>{{ student[3] }}</td>
+                        <td>
+                            <a
+                                class="delete"
+                                href="/delete/{{ student[0] }}"
+                                onclick="return confirm('Delete this student?')"
+                            >Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">
+                <h3>No students yet</h3>
+                <p>Add your first student above.</p>
+            </div>
+            {% endif %}
+
+        </section>
+
+    </main>
+    <script>
+        function searchStudents() {
+            const filter = document.getElementById("searchBox").value.toLowerCase();
+            const rows = document.querySelectorAll("#studentTable tbody tr");
+
+            rows.forEach(row => {
+                row.style.display =
+                    row.innerText.toLowerCase().includes(filter) ? "" : "none";
+            });
+        }
+    </script>
 
 </body>
 </html>
