@@ -24,7 +24,7 @@ pipeline {
                 sh '''
                 docker stop student-app || true
                 docker rm student-app || true
-                docker run -d --name student-app -p 5000:5000 student-devops:${BUILD_NUMBER}
+                docker run -d --restart unless-stopped --name student-app -p 5000:5000 student-devops:${BUILD_NUMBER}
                 '''
             }
         }
